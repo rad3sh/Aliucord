@@ -95,10 +95,10 @@ fun patchUser() {
                 globalNames[user.id] = user.globalName
                 logger.debug("[SET | CoreUser and MeUser] username=${user.username}, globalName=${user.globalName}")
             } else {
-                logger.error("[ERROR | CoreUser and MeUser] username=${user.username} have not a global name")
+                logger.info("[ERROR | CoreUser and MeUser] username=${user.username} have not a global name")
             }
         } else {
-            logger.error("[ERROR | CoreUser and MeUser] isnot RNUser")
+            logger.info("[ERROR | CoreUser and MeUser] isnot RNUser")
         }
     }
     Patcher.addPatch(CoreUser::class.java.getDeclaredConstructor(User::class.java), hook)
