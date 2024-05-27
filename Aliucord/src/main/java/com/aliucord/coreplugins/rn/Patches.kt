@@ -104,6 +104,7 @@ fun patchUser() {
                 logger.info("[ERROR | CoreUser and MeUser] username=${user.username} have not a global name")
             }
         } else {
+            logger.info("[SEE | ${it.args[0]}")
             logger.info("[ERROR | CoreUser and MeUser] isnot RNUser")
         }
     }
