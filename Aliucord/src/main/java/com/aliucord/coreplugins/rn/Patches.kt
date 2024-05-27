@@ -103,8 +103,8 @@ fun patchUser() {
     Patcher.addPatch(GuildMember.Companion::class.java.getDeclaredMethod("getNickOrUsername", ModelUser::class.java, GuildMember::class.java, Channel::class.java, List::class.java), Hook {
         val user = it.args[0] as ModelUser
         if (it.result == user.username && globalNames.containsKey(user.id)) {
-            it.result = globalname
-            logger.debug("[GET | GuildMember.Companion getNickOrUsername] username=${user.username}, globalName=$globalname")
+            it.result = globalNames[user.id]
+            logger.debug("[GET | GuildMember.Companion getNickOrUsername] username=${user.username}, globalName=${globalNames[user.id]}")
         } else {
             logger.debug("[GET | GuildMember.Companion getNickOrUsername] no globalname found for username=${user.username}")
         }
