@@ -90,11 +90,15 @@ fun patchUser() {
 
     val hook = Hook {
         val user = it.args[0] as User
-        if (user is RNUser && user.globalName != null) {
-            globalNames[user.id] = user.globalName
-            logger.debug("[SET | CoreUser and MeUser] username=${user.username}, globalName=${user.globalName}")
+        if (user is RNUser) {
+            if(user.globalName != null){
+                globalNames[user.id] = user.globalName
+                logger.debug("[SET | CoreUser and MeUser] username=${user.username}, globalName=${user.globalName}")
+            } else {
+                logger.error("[ERROR | CoreUser and MeUser] username=${user.username} have not a global name")
+            }
         } else {
-            logger.debug("[SET | CoreUser and MeUser] user username=${user.username} not RNUser or no globalName")
+            logger.error("[ERROR | CoreUser and MeUser] isnot RNUser")
         }
     }
     Patcher.addPatch(CoreUser::class.java.getDeclaredConstructor(User::class.java), hook)
