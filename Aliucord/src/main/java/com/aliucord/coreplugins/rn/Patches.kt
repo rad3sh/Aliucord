@@ -79,15 +79,9 @@ fun patchNextCallAdapter() {
 val globalNames = mutableMapOf<Long, String>()
 fun patchUser() {
     val original = User::class.java
-    val original2 = UserProfile::class.java
     val new = RNUser::class.java
     Patcher.addPatch(InboundGatewayGsonParser::class.java.getDeclaredMethod("fromJson", JsonReader::class.java, Class::class.java), PreHook {
-        if (it.args[1] == original) {
-            it.args[1] = new 
-        } else if (it.args[1] == original2) {
-            val userProfile = it.args[1] as UserProfile
-            logger.debug("[SET | seted to new ${userProfile}]")
-        }
+        if (it.args[1] == original) it.args[1] = new 
     })
 
     Patcher.addPatch(UserUtils::class.java.getDeclaredMethod("padDiscriminator", Int::class.java), PreHook {
@@ -104,10 +98,13 @@ fun patchUser() {
                 logger.info("[ERROR | CoreUser and MeUser] username=${user.username} have not a global name")
             }
         } else {
-            logger.info("[SEE | ${it.args[0]}")
             logger.info("[ERROR | CoreUser and MeUser] isnot RNUser")
         }
     }
+    val hook2 = Hook {
+        logger.info("[View | Hook2 => ${it.args[0]}")
+    }
+    Patcher.addPatch(InboundGatewayGsonParser::class.java.getDeclaredConstructor(User::class.java), hook2)
     Patcher.addPatch(CoreUser::class.java.getDeclaredConstructor(User::class.java), hook)
     Patcher.addPatch(MeUser::class.java.getDeclaredConstructor(User::class.java), hook)
 
