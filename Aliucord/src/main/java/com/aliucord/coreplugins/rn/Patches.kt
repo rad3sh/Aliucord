@@ -90,9 +90,9 @@ fun patchUser() {
 
     val hook = Hook {
         val user = it.args[0] as User
-        if (user is RNUser && user.global_name != null) {
-            globalNames[user.id] = user.global_name
-            logger.debug("[SET | CoreUser and MeUser] username=${user.username}, globalName=${user.global_name}")
+        if (user is RNUser && user.globalName != null) {
+            globalNames[user.id] = user.globalName
+            logger.debug("[SET | CoreUser and MeUser] username=${user.username}, globalName=${user.globalName}")
         } else {
             logger.debug("[SET | CoreUser and MeUser] user username=${user.username} not RNUser or no globalName")
         }
@@ -104,7 +104,7 @@ fun patchUser() {
         val user = it.args[0] as ModelUser
         if (it.result == user.username && globalNames.containsKey(user.id)) {
             it.result = globalNames[user.id]
-            logger.debug("[GET | GuildMember.Companion getNickOrUsername] username=${user.username}, globalName=${globalNames[user.id]}")
+            logger.debug("[GET | GuildMember.Companion getNickOrUsername] username=${user.username}, globalName=${globalNames[user.id]}}")
         } else {
             logger.debug("[GET | GuildMember.Companion getNickOrUsername] no globalname found for username=${user.username}")
         }
@@ -148,7 +148,7 @@ fun patchUser() {
 
     Patcher.addPatch(`ChannelUtils$getDisplayName$1`::class.java.getDeclaredMethod("invoke", Any::class.java), PreHook {
         val user = it.args[0]
-        if (user is RNUser && user.global_name != null) it.result = user.global_name
+        if (user is RNUser && user.globalName != null) it.result = user.globalName
     })
 }
 

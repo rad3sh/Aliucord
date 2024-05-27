@@ -14,10 +14,12 @@ import com.discord.nullserializable.NullSerializable
 class RNUser(
     id: Long,
     username: String,
+    val globalName: String?,
     avatar: NullSerializable<String>?,
     unused: NullSerializable<*>?,
     discriminator: String,
     publicFlags: Int?,
+    clan: Boolean?,
     flags: Int?,
     bot: Boolean?,
     system: Boolean?,
@@ -35,5 +37,4 @@ class RNUser(
     p20: NullSerializable<*>?,
     p21: NullSerializable<*>?,
     flags2: Int,
-    val global_name: String?
 ) : User(id, username, avatar, unused, discriminator, publicFlags, flags, bot, system, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, flags2)
