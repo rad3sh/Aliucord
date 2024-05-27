@@ -115,9 +115,9 @@ fun patchUser() {
             val user = it.args[0] as ModelUser
             if (globalNames.containsKey(user.id)) {
                 it.args[1] = globalNames[user.id]
-                logger.debug("[GET | UserNameFormatterKt getSpannableForUserNameWithDiscrim"] username=${user.username}, globalName=${globalNames[user.id]}")
+                logger.debug("[GET | UserNameFormatterKt getSpannableForUserNameWithDiscrim] username=${user.username}, globalName=${globalNames[user.id]}")
             } else {
-                logger.debug("[GET | UserNameFormatterKt getSpannableForUserNameWithDiscrim"] no globalname found for username=${user.username}")
+                logger.debug("[GET | UserNameFormatterKt getSpannableForUserNameWithDiscrim] no globalname found for username=${user.username}")
             }
         }
     })
