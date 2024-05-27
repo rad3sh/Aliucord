@@ -93,7 +93,9 @@ fun patchUser() {
 
     Patcher.addPatch(GuildMember.Companion::class.java.getDeclaredMethod("getNickOrUsername", ModelUser::class.java, GuildMember::class.java, Channel::class.java, List::class.java), Hook {
         val user = it.args[0] as ModelUser
-        if (it.result == user.username && globalNames.containsKey(user.id)) it.result = globalNames[user.id]
+        val globalName = if (globalNames.containsKey(user.id)) globalNames[user.id] else "not available"
+        logger.info("RNDisplay | username=${user.username}, globalNameContainsId=${globalNames.containsKey(user.id)}, globalName=$globalName")
+        if (it.result == user.username && globalNames.containsKey(user.id)) it.result = globalName
     })
 
     Patcher.addPatch(UserNameFormatterKt::class.java.getDeclaredMethod("getSpannableForUserNameWithDiscrim", ModelUser::class.java, String::class.java, Context::class.java, Int::class.java, Int::class.java, Int::class.java, Int::class.java, Int::class.java, Int::class.java), PreHook {
