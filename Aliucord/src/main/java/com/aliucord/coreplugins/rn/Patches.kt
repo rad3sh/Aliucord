@@ -79,10 +79,16 @@ fun patchNextCallAdapter() {
 val globalNames = mutableMapOf<Long, String>()
 fun patchUser() {
     val original = User::class.java
+    val original2 = UserProfile::class.java
     val new = RNUser::class.java
-
     Patcher.addPatch(InboundGatewayGsonParser::class.java.getDeclaredMethod("fromJson", JsonReader::class.java, Class::class.java), PreHook {
-        if (it.args[1] == original) it.args[1] = new
+        if (it.args[1] == original) {
+            it.args[1] = new 
+        } else if (it.args[1] == original2) {
+            val userProfile = it.args[1] as UserProfile
+            userProfile.user = new
+            logger.debug("[SET | seted to new ${userProfile.user}]")
+        }
     })
 
     Patcher.addPatch(UserUtils::class.java.getDeclaredMethod("padDiscriminator", Int::class.java), PreHook {
@@ -90,7 +96,7 @@ fun patchUser() {
     })
 
     val hook = Hook {
-        val user = it.args[0] as RNUser
+        val user = it.args[0] as User
         if (user is RNUser) {
             if(user.globalName != null){
                 globalNames[user.id] = user.globalName
