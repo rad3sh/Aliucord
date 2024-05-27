@@ -98,16 +98,12 @@ fun patchUser() {
                 logger.info("[ERROR | CoreUser and MeUser] username=${user.username} have not a global name")
             }
         } else {
-            logger.info("[ERROR | CoreUser and MeUser] isnot RNUser")
+            logger.info("[ERROR | CoreUser and MeUser] ${it.args[0]}, ${it.args[1]}")
         }
     }
-    val hook2 = Hook {
-        logger.info("[View | Hook2 => ${it.args[0]}")
-    }
-    Patcher.addPatch(InboundGatewayGsonParser::class.java.getDeclaredConstructor(User::class.java), hook2)
     Patcher.addPatch(CoreUser::class.java.getDeclaredConstructor(User::class.java), hook)
     Patcher.addPatch(MeUser::class.java.getDeclaredConstructor(User::class.java), hook)
-
+ 
     Patcher.addPatch(GuildMember.Companion::class.java.getDeclaredMethod("getNickOrUsername", ModelUser::class.java, GuildMember::class.java, Channel::class.java, List::class.java), Hook {
         val user = it.args[0] as ModelUser
         if (it.result == user.username && globalNames.containsKey(user.id)) {
