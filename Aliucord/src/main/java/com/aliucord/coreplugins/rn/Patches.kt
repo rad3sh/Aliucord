@@ -12,6 +12,7 @@ import com.aliucord.api.rn.user.RNUser
 import com.aliucord.api.rn.user.RNUserProfile
 import com.aliucord.patcher.*
 import com.aliucord.utils.RNSuperProperties
+import com.aliucord.Logger
 import com.discord.api.channel.Channel
 import com.discord.api.channel.`ChannelUtils$getDisplayName$1`
 import com.discord.api.sticker.Sticker
@@ -43,6 +44,9 @@ import java.lang.reflect.Type
 import java.util.Collections
 import java.util.TimeZone
 import com.discord.models.user.User as ModelUser
+
+
+internal val logger = Logger("Patches")
 
 class RNHeadersInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
