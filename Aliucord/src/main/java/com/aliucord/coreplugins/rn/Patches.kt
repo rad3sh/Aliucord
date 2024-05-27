@@ -98,7 +98,9 @@ fun patchUser() {
                 logger.info("[ERROR | CoreUser and MeUser] username=${user.username} have not a global name")
             }
         } else {
-            logger.info("NOT RNUser | CoreUser and MeUser] ${it.args[0]}")
+            val user = it.args[0]
+            logger.info("NOT RNUser | CoreUser and MeUser]")
+            logger.info("${user}")
         }
     }
     Patcher.addPatch(CoreUser::class.java.getDeclaredConstructor(User::class.java), hook)
