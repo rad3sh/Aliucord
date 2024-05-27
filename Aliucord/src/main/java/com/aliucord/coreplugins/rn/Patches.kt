@@ -86,8 +86,7 @@ fun patchUser() {
             it.args[1] = new 
         } else if (it.args[1] == original2) {
             val userProfile = it.args[1] as UserProfile
-            userProfile.user = new
-            logger.debug("[SET | seted to new ${userProfile.user}]")
+            logger.debug("[SET | seted to new ${userProfile}]")
         }
     })
 
