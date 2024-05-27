@@ -1,7 +1,6 @@
 name: Build Aliucord
 
 on:
-  workflow_dispatch
   push:
     branches:
       - main
