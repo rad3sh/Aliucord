@@ -89,23 +89,37 @@ fun patchUser() {
     })
 
     val hook = Hook {
-        val user = it.args[0] as User
         val obj = it.args[0]
+        val user = obj as User
         if (user is RNUser) {
             if(user.globalName != null){
                 globalNames[user.id] = user.globalName
-                logger.debug("[SET | CoreUser and MeUser] username=${user.username}, globalName=${user.globalName}")
+                logger.debug("[SET | CoreUser ] username=${user.username}, globalName=${user.globalName}")
             } else {
-                logger.info("[ERROR | CoreUser and MeUser] username=${user.username} have not a global name")
+                logger.info("[ERROR | CoreUser ] username=${user.username} have not a global name")
             }
-        } else if (obj is CoreUser) {
-            logger.info("[INFO | CoreUser and MeUser] is CoreUser")
-        } else if (obj is MeUser) {
-            logger.info("[INFO | CoreUser and MeUser] is MeUser")
+        } else {
+            logger.info("[INFO | CoreUser] ${obj}")
         }
     }
+
+    val hook2 = Hook {
+        val obj = it.args[0]
+        val user = obj as User
+        if (user is RNUser) {
+            if(user.globalName != null){
+                globalNames[user.id] = user.globalName
+                logger.debug("[SET | MeUser] username=${user.username}, globalName=${user.globalName}")
+            } else {
+                logger.info("[ERROR | MeUser] username=${user.username} have not a global name")
+            }
+        } else {
+            logger.info("[INFO | MeUser] ${obj}")
+        }
+    }
+
     Patcher.addPatch(CoreUser::class.java.getDeclaredConstructor(User::class.java), hook)
-    Patcher.addPatch(MeUser::class.java.getDeclaredConstructor(User::class.java), hook)
+    Patcher.addPatch(MeUser::class.java.getDeclaredConstructor(User::class.java), hook2)
  
     Patcher.addPatch(GuildMember.Companion::class.java.getDeclaredMethod("getNickOrUsername", ModelUser::class.java, GuildMember::class.java, Channel::class.java, List::class.java), Hook {
         val user = it.args[0] as ModelUser
