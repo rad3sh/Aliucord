@@ -12,7 +12,6 @@ import com.aliucord.api.rn.user.RNUser
 import com.aliucord.api.rn.user.RNUserProfile
 import com.aliucord.patcher.*
 import com.aliucord.utils.RNSuperProperties
-import com.aliucord.Logger
 import com.discord.api.channel.Channel
 import com.discord.api.channel.`ChannelUtils$getDisplayName$1`
 import com.discord.api.sticker.Sticker
@@ -44,9 +43,6 @@ import java.lang.reflect.Type
 import java.util.Collections
 import java.util.TimeZone
 import com.discord.models.user.User as ModelUser
-
-
-internal val logger = Logger("Patches")
 
 class RNHeadersInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -81,7 +77,7 @@ fun patchUser() {
     val original = User::class.java
     val new = RNUser::class.java
     Patcher.addPatch(InboundGatewayGsonParser::class.java.getDeclaredMethod("fromJson", JsonReader::class.java, Class::class.java), PreHook {
-        if (it.args[1] == original) it.args[1] = new 
+        if (it.args[1] == original) it.args[1] = new
     })
 
     Patcher.addPatch(UserUtils::class.java.getDeclaredMethod("padDiscriminator", Int::class.java), PreHook {
@@ -89,68 +85,27 @@ fun patchUser() {
     })
 
     val hook = Hook {
-        val obj = it.args[0]
-        val user = obj as User
-        if (user is RNUser) {
-            if(user.globalName != null){
-                globalNames[user.id] = user.globalName
-                logger.debug("[SET | CoreUser ] username=${user.username}, globalName=${user.globalName}")
-            } else {
-                logger.info("[ERROR | CoreUser ] username=${user.username} have not a global name")
-            }
-        } else {
-            logger.info("[INFO | CoreUser] ${obj}")
-        }
+        val user = it.args[0] as User
+        if (user is RNUser && user.globalName != null) globalNames[user.id] = user.globalName
     }
-
-    val hook2 = Hook {
-        val obj = it.args[0]
-        val user = obj as User
-        if (user is RNUser) {
-            if(user.globalName != null){
-                globalNames[user.id] = user.globalName
-                logger.debug("[SET | MeUser] username=${user.username}, globalName=${user.globalName}")
-            } else {
-                logger.info("[ERROR | MeUser] username=${user.username} have not a global name")
-            }
-        } else {
-            logger.info("[INFO | MeUser] ${obj}")
-        }
-    }
-
     Patcher.addPatch(CoreUser::class.java.getDeclaredConstructor(User::class.java), hook)
-    Patcher.addPatch(MeUser::class.java.getDeclaredConstructor(User::class.java), hook2)
- 
+    Patcher.addPatch(MeUser::class.java.getDeclaredConstructor(User::class.java), hook)
+
     Patcher.addPatch(GuildMember.Companion::class.java.getDeclaredMethod("getNickOrUsername", ModelUser::class.java, GuildMember::class.java, Channel::class.java, List::class.java), Hook {
         val user = it.args[0] as ModelUser
-        if (it.result == user.username && globalNames.containsKey(user.id)) {
-            it.result = globalNames[user.id]
-            logger.debug("[GET | GuildMember.Companion getNickOrUsername] username=${user.username}, globalName=${globalNames[user.id]}}")
-        } else {
-            logger.debug("[GET | GuildMember.Companion getNickOrUsername] no globalname found for username=${user.username}")
-        }
+        if (it.result == user.username && globalNames.containsKey(user.id)) it.result = globalNames[user.id]
     })
 
     Patcher.addPatch(UserNameFormatterKt::class.java.getDeclaredMethod("getSpannableForUserNameWithDiscrim", ModelUser::class.java, String::class.java, Context::class.java, Int::class.java, Int::class.java, Int::class.java, Int::class.java, Int::class.java, Int::class.java), PreHook {
         if (it.args[1] == null) {
             val user = it.args[0] as ModelUser
-            if (globalNames.containsKey(user.id)) {
-                it.args[1] = globalNames[user.id]
-                logger.debug("[GET | UserNameFormatterKt getSpannableForUserNameWithDiscrim] username=${user.username}, globalName=${globalNames[user.id]}")
-            } else {
-                logger.debug("[GET | UserNameFormatterKt getSpannableForUserNameWithDiscrim] no globalname found for username=${user.username}")
-            }
+            if (globalNames.containsKey(user.id)) it.args[1] = globalNames[user.id]
         }
     })
 
     Patcher.addPatch(UserProfileHeaderView::class.java.getDeclaredMethod("getSecondaryNameTextForUser", ModelUser::class.java, GuildMember::class.java), PreHook {
         val user = it.args[0] as ModelUser
-        if (globalNames.containsKey(user.id)) {
-            it.result = UserUtils.INSTANCE.getUserNameWithDiscriminator(user, null, null)
-            logger.debug("[GET | UserProfileHeaderView getSecondaryNameTextForUser] username=${user.username}, globalName=${globalNames[user.id]}")
-        } else {
-            logger.debug("[GET | UserProfileHeaderView getSecondaryNameTextForUser] no globalname found for username=${user.username}")
-        }
+        if (globalNames.containsKey(user.id)) it.result = UserUtils.INSTANCE.getUserNameWithDiscriminator(user, null, null)
     })
     val headerViewModel = UserProfileHeaderViewModel.ViewState.Loaded::class.java
     Patcher.addPatch(UserProfileHeaderView::class.java.getDeclaredMethod("configureSecondaryName", headerViewModel), object : XC_MethodHook() {

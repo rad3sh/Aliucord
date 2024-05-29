@@ -17,9 +17,9 @@ class RNAPI : Plugin(Manifest("RNAPI")) {
         XposedBridge.makeClassInheritable(User::class.java)
         XposedBridge.makeClassInheritable(UserProfile::class.java)
 
+        patchNextCallAdapter()
         patchUser()
         patchUserProfile()
-        patchNextCallAdapter()
         patchDefaultAvatars()
         patchUsername()
         patchStickers()

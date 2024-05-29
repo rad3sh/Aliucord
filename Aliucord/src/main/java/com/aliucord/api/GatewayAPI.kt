@@ -117,8 +117,6 @@ object GatewayAPI {
                             ).data
 
                         listener(data)
-                        logger.debug("---->> [RAW Gateway | ${eventName}] ")
-                        logger.debug("${rawEvent}")
                     } catch (e: Throwable) {
                         logger.error("Failed to serialize data for event: $eventName", e)
                     }
